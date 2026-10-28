@@ -6,7 +6,9 @@ the control room verifies them, dispatches response units and allocates relief. 
 procedures) live in the database, and the website shows its data **live**.
 
 **Stack:** React + TypeScript (website) → FastAPI / Python (API) → PostgreSQL (database).
-Live link-https://dmers-ten.vercel.app/
+
+
+Live demo-https://dmers-ten.vercel.app/
 ---
 
 ## Contents
