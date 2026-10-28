@@ -1,0 +1,21 @@
+sequenceDiagram
+  autonumber
+  actor K as Coordinator
+  participant UI as React SPA
+  participant API as FastAPI
+  participant PG as PostgreSQL
+  K->>UI: Dispatch unit to incident #7
+  UI->>API: POST /api/dispatches {incident_id, unit_id}
+  API->>PG: CALL sp_dispatch_unit(7, unit, user)
+  PG->>PG: Check account_type = COORDINATOR (FR-07)
+  PG->>PG: Trigger T3: unit AVAILABLE? incident VERIFIED/RESPONDING? (BR-05)
+  PG->>PG: INSERT dispatch · unit → DEPLOYED · incident → RESPONDING
+  PG->>PG: Trigger T1: timeline entry (logged_by = coordinator)
+  alt a rule fails
+    PG-->>API: RAISE EXCEPTION / constraint violation
+    API-->>UI: 409 with the database's message
+  else success
+    PG-->>API: OK
+    API-->>UI: 201 dispatch row
+    UI-->>K: Toast + refreshed incident panel
+  end

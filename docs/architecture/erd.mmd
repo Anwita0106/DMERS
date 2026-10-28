@@ -1,0 +1,48 @@
+erDiagram
+  USERS ||--o{ INCIDENTS : "reports (reported_by)"
+  ZONES ||--o{ INCIDENTS : "located in"
+  ZONES ||--o{ RESPONSE_UNITS : "based in"
+  USERS |o--o| RESPONSE_UNITS : "leads (lead_user_id)"
+  INCIDENTS ||--|{ INCIDENT_UPDATES : "timeline (weak entity)"
+  INCIDENTS ||--o{ DISPATCHES : ""
+  RESPONSE_UNITS ||--o{ DISPATCHES : ""
+  USERS ||--o{ DISPATCHES : "authorises"
+  INCIDENTS ||--o{ RESOURCE_ALLOCATIONS : ""
+  RESOURCES ||--o{ RESOURCE_ALLOCATIONS : ""
+  ZONES ||--o| APP_ZONE_GEO : "app: map position"
+  ZONES ||--o{ APP_SHELTERS : "app: shelters"
+  INCIDENTS ||--o{ APP_INCIDENT_ATTACHMENTS : "app: photos"
+  USERS { int id PK
+    varchar account_type
+    varchar email UK }
+  ZONES { int id PK
+    varchar zone_name UK
+    varchar risk_level }
+  INCIDENTS { int id PK
+    varchar severity
+    varchar status
+    int zone_id FK
+    int reported_by FK }
+  RESPONSE_UNITS { int id PK
+    varchar unit_type
+    varchar availability_status
+    int zone_id FK }
+  RESOURCES { int id PK
+    int quantity_available
+    int reorder_level }
+  INCIDENT_UPDATES { int incident_id PK
+    int update_no PK }
+  DISPATCHES { int incident_id PK
+    int unit_id PK
+    varchar dispatch_status }
+  RESOURCE_ALLOCATIONS { int incident_id PK
+    int resource_id PK
+    int quantity }
+  APP_ZONE_GEO { int zone_id PK
+    numeric latitude
+    numeric longitude }
+  APP_SHELTERS { int id PK
+    int zone_id FK
+    int capacity }
+  APP_INCIDENT_ATTACHMENTS { int id PK
+    int incident_id FK }

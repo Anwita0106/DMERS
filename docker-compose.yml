@@ -1,0 +1,58 @@
+# DMERS
+#   docker compose up --build            -> http://localhost:5173  (API docs: http://localhost:8000/docs)
+#
+# New database: the "db" service starts an EMPTY volume once and loads the original
+# original SQL scripts + the additive app migration (M001). On every later start the data is kept.
+#
+# Existing database: put its URL in .env as DATABASE_URL and start only the app:
+#   docker compose up --build --no-deps backend frontend
+# The API applies only database/migrations/M*.sql (additive, idempotent) and never drops,
+# resets or recreates anything.
+name: dmers
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: dmers
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-dmers}
+      POSTGRES_DB: dmers
+      TZ: Asia/Kolkata
+    ports: ["5433:5432"]
+    volumes:
+      - dmers_pgdata:/var/lib/postgresql/data
+      - ./database/initdb:/docker-entrypoint-initdb.d:ro
+      - ./database:/dmers-sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U dmers -d dmers"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  backend:
+    build: { context: ., dockerfile: backend/Dockerfile }
+    environment:
+      DATABASE_URL: ${DATABASE_URL:-postgresql://dmers:dmers@db:5432/dmers}
+      # Alternative to DATABASE_URL (use when the password contains @ : /)
+      DB_HOST: ${DB_HOST:-}
+      DB_PORT: ${DB_PORT:-5432}
+      DB_NAME: ${DB_NAME:-}
+      DB_USER: ${DB_USER:-}
+      DB_PASSWORD: ${DB_PASSWORD:-}
+      JWT_SECRET: ${JWT_SECRET:-change-me-in-env}
+      APP_TIMEZONE: ${APP_TIMEZONE:-Asia/Kolkata}
+      DMERS_AUTO_MIGRATE: ${DMERS_AUTO_MIGRATE:-true}
+      CORS_ORIGINS: ${CORS_ORIGINS:-http://localhost:5173}
+    ports: ["8000:8000"]
+    volumes: ["dmers_uploads:/srv/uploads"]
+    depends_on:
+      db: { condition: service_healthy }
+    extra_hosts: ["host.docker.internal:host-gateway"]
+
+  frontend:
+    build: { context: ./frontend }
+    ports: ["5173:80"]
+    depends_on: [backend]
+
+volumes:
+  dmers_pgdata:
+  dmers_uploads:

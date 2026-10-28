@@ -1,0 +1,22 @@
+# Render Blueprint: the DMERS API (FastAPI) as a free Docker web service.
+# Render dashboard -> New -> Blueprint -> pick this repository. It will ask for DATABASE_URL.
+services:
+  - type: web
+    name: dmers-api
+    runtime: docker
+    plan: free
+    region: singapore
+    dockerfilePath: ./backend/Dockerfile
+    dockerContext: .
+    healthCheckPath: /api/health
+    envVars:
+      - key: DATABASE_URL          # Neon connection string (direct, NOT the "-pooler" one)
+        sync: false
+      - key: JWT_SECRET
+        generateValue: true
+      - key: APP_TIMEZONE
+        value: Asia/Kolkata
+      - key: DMERS_AUTO_MIGRATE
+        value: "true"
+      - key: CORS_ORIGIN_REGEX     # lets any *.vercel.app site of yours call the API
+        value: https://.*\.vercel\.app

@@ -1,0 +1,32 @@
+flowchart LR
+  subgraph Clients["Users (browser)"]
+    C1["Citizen<br/>public site"]
+    C2["Coordinator / Unit lead /<br/>Administrator<br/>Command Center"]
+  end
+  subgraph FE["Website (Vite :5288 local, nginx :5173 in Docker)"]
+    SPA["React 18 + TypeScript SPA<br/>Tailwind · Leaflet · Recharts"]
+  end
+  subgraph BE["Backend API (FastAPI :8765 local, :8000 in Docker)"]
+    AUTH["Auth<br/>JWT + Werkzeug scrypt"]
+    API["REST routers<br/>incidents · operations · zones<br/>insights · users"]
+    RULES["Role checks +<br/>error mapping"]
+    MIG["Start-up: schema check +<br/>additive migration M001"]
+  end
+  subgraph DB["PostgreSQL 16+ (your server)"]
+    CORE[("Original DMERS design (unchanged)<br/>8 tables · 3 functions<br/>2 procedures · 5 triggers")]
+    APP[("App additions<br/>app_zone_geo · app_shelters<br/>app_incident_attachments<br/>app_schema_migrations")]
+  end
+  FILES[("Uploads volume<br/>incident photos")]
+  TILES["OpenStreetMap / CARTO<br/>map tiles"]
+
+  C1 --> SPA
+  C2 --> SPA
+  SPA -- "/api (JSON, Bearer token)" --> API
+  SPA -. tiles .-> TILES
+  API --> AUTH
+  API --> RULES
+  RULES -- "SQL · CALL sp_* · SET dmers.actor_id" --> CORE
+  API --> APP
+  API --> FILES
+  MIG --> APP
+  APP -. "FK (CASCADE / SET NULL)" .-> CORE

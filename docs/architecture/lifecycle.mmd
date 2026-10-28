@@ -1,0 +1,12 @@
+stateDiagram-v2
+  [*] --> REPORTED: Citizen reports<br/>(T1 writes timeline #1)
+  REPORTED --> VERIFIED: Coordinator verifies<br/>zone required (FR-05)
+  REPORTED --> REJECTED: Coordinator rejects
+  VERIFIED --> RESPONDING: sp_dispatch_unit<br/>(first unit sent)
+  VERIFIED --> RESOLVED: Handled without units
+  RESPONDING --> RESOLVED: All dispatches cleared
+  VERIFIED --> CLOSED: sp_close_incident
+  RESPONDING --> CLOSED: sp_close_incident<br/>(cursor releases units)
+  RESOLVED --> CLOSED: sp_close_incident
+  REJECTED --> [*]: Admin may delete
+  CLOSED --> [*]

@@ -1,0 +1,89 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Palette (RGB channels). Green-on-near-black follows the DMERS concept. */
+:root {
+  --bg: 246 248 247;
+  --surface: 255 255 255;
+  --raised: 240 244 242;
+  --line: 222 230 226;
+  --ink: 14 24 19;
+  --muted: 88 104 95;
+  --faint: 140 154 146;
+  --brand: 22 163 74;
+  --brand-strong: 21 128 61;
+  --brand-soft: 220 252 231;
+  --brand-ink: 255 255 255;
+  --sev-critical: 220 38 38;
+  --sev-high: 234 88 12;
+  --sev-moderate: 202 138 4;
+  --sev-low: 22 163 74;
+  --info: 37 99 235;
+  color-scheme: light;
+}
+.dark {
+  --bg: 7 11 9;
+  --surface: 13 19 16;
+  --raised: 20 28 24;
+  --line: 33 46 39;
+  --ink: 232 240 236;
+  --muted: 150 166 157;
+  --faint: 98 114 105;
+  --brand: 34 197 94;
+  --brand-strong: 22 163 74;
+  --brand-soft: 16 46 29;
+  --brand-ink: 4 20 10;
+  --sev-critical: 239 68 68;
+  --sev-high: 249 115 22;
+  --sev-moderate: 234 179 8;
+  --sev-low: 34 197 94;
+  --info: 96 165 250;
+  color-scheme: dark;
+}
+
+@layer base {
+  html { -webkit-text-size-adjust: 100%; }
+  body { @apply bg-bg text-ink font-sans antialiased; }
+  h1, h2, h3, h4 { @apply font-display tracking-tight; }
+  :focus-visible { outline: 2px solid rgb(var(--brand)); outline-offset: 2px; }
+  ::selection { background: rgb(var(--brand) / 0.3); }
+}
+
+@layer components {
+  .card { @apply bg-surface border border-line rounded-2xl; }
+  .input {
+    @apply w-full rounded-xl border border-line bg-surface px-3.5 py-2.5 text-sm text-ink placeholder:text-faint
+           transition focus:border-brand focus:outline-none focus:ring-2 focus:ring-brand/25 disabled:opacity-60;
+  }
+  .label { @apply mb-1.5 block text-xs font-semibold text-muted; }
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold transition
+           disabled:cursor-not-allowed disabled:opacity-50 whitespace-nowrap;
+  }
+  .btn-primary { @apply btn bg-brand text-brand-ink hover:bg-brand-strong hover:text-white shadow-glow; }
+  .btn-outline { @apply btn border border-line bg-surface text-ink hover:border-brand hover:text-brand; }
+  .btn-ghost { @apply btn text-muted hover:bg-raised hover:text-ink; }
+  .btn-danger { @apply btn bg-sev-critical text-white hover:opacity-90; }
+  .btn-sm { @apply px-3 py-1.5 text-xs rounded-lg; }
+  .chip { @apply inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[11px] font-semibold leading-none; }
+  .table-head { @apply px-4 py-3 text-left text-[11px] font-semibold uppercase tracking-wider text-faint; }
+  .table-cell { @apply px-4 py-3 text-sm align-middle; }
+  .eyebrow { @apply text-xs font-bold uppercase tracking-[0.14em] text-brand; }
+}
+
+/* Leaflet */
+.map-dark .leaflet-tile-pane { filter: invert(1) hue-rotate(180deg) brightness(.92) contrast(.88) saturate(.6); }
+.leaflet-container { font-family: inherit; background: rgb(var(--raised)); border-radius: inherit; }
+.leaflet-popup-content-wrapper, .leaflet-popup-tip { background: rgb(var(--surface)); color: rgb(var(--ink)); }
+.leaflet-popup-content { margin: 12px 14px; font-size: 13px; }
+.leaflet-control-attribution { font-size: 9px; }
+.dark .leaflet-control-attribution { background: rgb(0 0 0 / .55) !important; color: #9ca3af; }
+.dark .leaflet-control-attribution a { color: #86efac; }
+.dark .leaflet-bar a { background: rgb(var(--surface)); color: rgb(var(--ink)); border-color: rgb(var(--line)); }
+.pin { position: relative; width: 18px; height: 18px; }
+.pin span { position: absolute; inset: 0; border-radius: 9999px; border: 2px solid white; box-shadow: 0 2px 6px rgb(0 0 0 / .4); }
+.pin i { position: absolute; inset: 0; border-radius: 9999px; animation: pulseRing 1.8s ease-out infinite; }
+
+/* Thin scrollbars */
+* { scrollbar-width: thin; scrollbar-color: rgb(var(--line)) transparent; }
