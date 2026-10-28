@@ -7,8 +7,6 @@ procedures) live in the database, and the website shows its data **live**.
 
 **Stack:** React + TypeScript (website) → FastAPI / Python (API) → PostgreSQL (database).
 
-
-Live demo-https://dmers-ten.vercel.app/
 ---
 
 ## Contents
