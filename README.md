@@ -62,11 +62,8 @@ procedures) live in the database, and the website shows its data **live**.
 
 | What | Address |
 |---|---|
-| Website | **http://localhost:5288** |
-| API (backend) | http://127.0.0.1:8765 (API docs: http://127.0.0.1:8765/docs) |
-
-DMERS uses ports **5288** and **8765** on purpose. Other projects usually use 5173 and 8000,
-so DMERS can run alongside them without clashing.
+| Website | **https://dmers-ten.vercel.app/** |
+| API (backend) | https://dmers-api.onrender.com/ |
 
 ---
 
